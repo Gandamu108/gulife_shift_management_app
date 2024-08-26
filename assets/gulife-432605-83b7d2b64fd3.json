@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "gulife-432605",
+  "private_key_id": "83b7d2b64fd3f675cb2128d6b313d89b02401f2a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCzePcECbSRDSmy\n0xjqtyk/QPrpT8mwmrngzXSqRGFs/UveR3RWFyD9phCFOIu5L5Y8ymnIUHK+zZa4\nheA/t4G+ssi9YOmB0+1+E0EbiRzmqJg/t54Iju5DHyqF/KJ784EyQxKMQsd3iwLe\nQBVqoWCUZiy7YK2eyIlE2x0l/d/z99+tQRN+I/c4stYcmb2EdW1x8mby869GHVow\n66naKS689WvD+Leiq7dxFIWONZJu0zIkno5/8SXeecEpD85pFWexWNy8Zw6mVkCf\n+MaQwbXLbQfEWUwDUXhuZfsnRl/ODDzV7iLsflTPXzZuL9Jj/OztnZFghEW8UR8I\n8P4HccclAgMBAAECggEAGJGuATXB7ByI8ZPgBJvL7/6ZitCTLBPWb+24c6m2S6kW\nVojiJnn2mHrAJrixugmHb+2G0zceKjwzTrH3G8nnn19Sx0gp103XpIuGvXoFBJee\ndhSRNBs7B2HQHLUT2lOgw2x2sNBghZ84ZowP0n/inJYrOACZbBQIZK55XE7Xtopk\n7jP8ci351HkKFRCZXLM0VL5V4DhoLabh7pXaG3l38VoBU0tnwaz2myCa6qVcTwh1\nWEC2G7o3q0v6cPCAOqDD2HCMRFWLKCnwPjXt8G9NstTk+GTum3RSSNDMS14le1F8\njNFQGQ/z0mfjC4b8o2k2MyL0rDu74U6sI9K08HPQgQKBgQDfTY119M2q6fvqurQg\ngcD1XzZNZj0Lczoaqwn2jaINEye2ovZJNE59JnJpOkqiaVgBUPIkE2kr1SSNcOMs\nQV3pz5iHOT8c8Z6SIUtEQP6oZk8BGsheA3IhCm76dPirGibikN2mqtY0J7IVnU/j\nDc0s7XxaqhHk52nFnHUV4wlrgQKBgQDNwHEBb7rk+uvG8toGAdcEBQxG5yMD1suM\nWgnFWgW0HoX9SGwyx0i9SA1RnXL3tuBs/e5Gs3xm6FYO8tW09mctJz3mMLSNidtQ\n7XTFomHiEcJ5IfCMD0wOZ1nVkdrcW96Qtgx4vG/pZyXV6NItQiVKBEbpn2au5keI\nJflFR6H9pQKBgAYH6CwpYmydSSp7xGWkW3vFCIhqnHd0szsJJ4m7JYdI3ye1mwU7\nHmuO4EQrSNy+D5xpfUCwLYT7irMvO1N0qH6qFqqAR04W0HuN3qSHRNlzeerDuGmh\nmjF+QKUPB7BHUomH9BSORJ6/+7VNvFybgNEX0OX59eXCwj6ODTN8IEMBAoGBAJ76\nCNcBS7lNoAwy7P8jQM3cUKYgRc/bkZ86mr4gVrPbudAAu4lore2C1LexHnoEldfh\nRNDgMkkZUBVw0Gto0EP1RECudXO/hvQ65bUnSNZyvn72GHVABJZEiQcaEa+eVJQf\n9fb8MsR3bKahpHRP3ZwZPemZvq95QuAR507+kE35AoGBANzj491y8uI721WqJHCQ\nk9J+ftCZVQpg7UTI5xPtTBs0N3X/kOCtlz4IN9EOuz61AVtRLsej4Act1MKUwOOy\nQVvwQWpj/C5R68CwFCZU9iYkblVF9RqTKKq6xJMASAWSllJKTn85y3d8fqBXi65I\n20vJy3OVhQmOccYU763eS2R8\n-----END PRIVATE KEY-----\n",
+  "client_email": "flutter-app-sheets-writer@gulife-432605.iam.gserviceaccount.com",
+  "client_id": "106894318982388764598",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/flutter-app-sheets-writer%40gulife-432605.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

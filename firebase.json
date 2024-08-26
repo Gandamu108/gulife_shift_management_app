@@ -1,0 +1,55 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "gu-life-shift-management",
+          "appId": "1:720935335953:android:dd6f60245c59bfc0e059b0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "gu-life-shift-management",
+          "appId": "1:720935335953:ios:e16220096bc1cfebe059b0",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "gu-life-shift-management",
+          "appId": "1:720935335953:ios:e16220096bc1cfebe059b0",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "gu-life-shift-management",
+          "configurations": {
+            "android": "1:720935335953:android:dd6f60245c59bfc0e059b0",
+            "ios": "1:720935335953:ios:e16220096bc1cfebe059b0",
+            "macos": "1:720935335953:ios:e16220096bc1cfebe059b0",
+            "web": "1:720935335953:web:6aad56df34d3b9c6e059b0",
+            "windows": "1:720935335953:web:062b88f29311bb22e059b0"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

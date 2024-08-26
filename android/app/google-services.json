@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "720935335953",
+    "project_id": "gu-life-shift-management",
+    "storage_bucket": "gu-life-shift-management.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720935335953:android:dd6f60245c59bfc0e059b0",
+        "android_client_info": {
+          "package_name": "com.example.gulife_shift_management_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaZHG3IMdCfsXR9IY4UvSM1zUmZ9w6ZNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
