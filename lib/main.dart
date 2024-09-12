@@ -13,8 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart'; 
-// import 'package:googleapis/calendar/v3.dart' as googleColors;
-// import 'package:styled_text/styled_text.dart';
+
 
 
 
@@ -65,16 +64,13 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
   // イベントを保存するMap
   Map<DateTime, List<String>> events = {};
 
-  
   User? _user;
   bool isMobile = !kIsWeb;
-
     
   @override
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser;
-
     // 各曜日に対応するコントローラーを初期化
     weekdays.forEach((day) {
       _startTimeControllers[day] = TextEditingController();
@@ -116,147 +112,304 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            // 曜日のリストを縦に並べる
-            Column(
-              children: weekdays.map((day) {
-                return Container(
-                  margin: EdgeInsets.only(top: 20, bottom: 0), // 上下にスペースを追加
-                  child: Column(
+      body: Stack(
+        children: <Widget>[
+          // 背景画像
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/jerome-prax-cr6U8ilcdIc-unsplash.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          SingleChildScrollView(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              if (constraints.maxWidth < 600) {
+                // 狭い画面用のレイアウト
+                return narrowLayout();
+              } else {
+                // 広い画面用のレイアウト
+                return wideLayout();
+              }
+            },
+          ),
+        )
+      ],
+    )  
+  );
+  }
+  // 狭い画面のレイアウト
+  Widget narrowLayout() {
+  return Container(
+    child: Column(
+    children: <Widget>[
+      // 曜日のリストを縦に並べる
+      Column(
+        children: weekdays.map((day) {
+          return Container(
+            margin: EdgeInsets.only(top: 20, bottom: 0), // 上下にスペースを追加
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(top: 0, left: 20, right: 0, bottom: 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 0, left: 20, right: 0, bottom: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              day,
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                      Text(
+                        day,
+                        style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold,
+                          backgroundColor: Colors.white.withOpacity(0.5), // 50%透明な白色
+                          
                         ),
-                      ),
-                      SizedBox(height: 10), // テキストと入力フィールドの間にスペースを追加
-
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'[a-zA-Z0-9:]')
-                          ),
-
-                          ],
-                        controller: _startTimeControllers[day],
-                        decoration: InputDecoration(
-                          hintText: '開始希望時刻を入力してください',
-                          labelText: '開始希望時刻',
-                          border: OutlineInputBorder(),
-                        ),
-                        // readOnly: !kIsWeb,
-                        onTap: () {
-                          if (isMobile) {
-                            
-                          }
-                          _showTimePicker(context, _startTimeControllers[day]!);
-                        },
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 10)),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'[a-zA-Z0-9:]')
-                          ),
-                          ],
-                        controller: _endTimeControllers[day],
-                        decoration: InputDecoration(
-                          hintText: '終了希望時刻を入力してください',
-                          labelText: '終了希望時刻',
-                          border: OutlineInputBorder(),
-                        ),
-                        // readOnly: !kIsWeb,
-                        onTap: () {
-                          if (isMobile) {
-
-                          }
-                          _showTimePicker(context, _endTimeControllers[day]!);
-                        },
                       ),
                     ],
                   ),
-                );
-              }).toList(),
-            ),
-            // ボタンの配置
-            Container(
-              padding: EdgeInsets.only(top: 30, bottom: 50),
-              child: ElevatedButton(
-                onPressed: () {
-                  _saveData();
-                   String userEmail = _user?.email ?? ''; // ログインユーザーのメールアドレスを取得
-                  sendEventToSheet(events, userEmail);
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(50, 50),
                 ),
-                child: Text(
-                  '申請',
-                  style: TextStyle(
-                    fontSize: 25,
+                SizedBox(height: 10), // テキストと入力フィールドの間にスペースを追加
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9:]')
+                      ),
+                    ],
+                    controller: _startTimeControllers[day],
+                    decoration: InputDecoration(
+                      // 背景色を設定
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: '開始希望時刻を入力してください',
+                      labelText: '開始希望時刻',
+                      border: OutlineInputBorder(),
+                    ),
+                    onTap: () {
+                      if (isMobile) {
+                        // モバイル用の処理（この部分は後で追加するかもしれません）
+                      }
+                      _showTimePicker(context, _startTimeControllers[day]!);
+                    },
                   ),
                 ),
-              ),
+                Padding(padding: EdgeInsets.only(top: 10)),
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9:]')
+                      ),
+                    ],
+                    controller: _endTimeControllers[day],
+                    decoration: InputDecoration(
+                       // 背景色を設定
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: '終了希望時刻を入力してください',
+                      labelText: '終了希望時刻',
+                      border: OutlineInputBorder(),
+                    ),
+                    onTap: () {
+                      if (isMobile) {
+                        // モバイル用の処理（この部分は後で追加するかもしれません）
+                      }
+                      _showTimePicker(context, _endTimeControllers[day]!);
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
+          );
+        }).toList(),
+      ),
+      // ボタンの配置
+      Container(
+        padding: EdgeInsets.only(top: 30, bottom: 50),
+        child: ElevatedButton(
+          onPressed: () {
+            _saveData();
+            String userEmail = _user?.email ?? ''; // ログインユーザーのメールアドレスを取得
+            sendEventToSheet(events, userEmail);
+          },
+          style: ElevatedButton.styleFrom(
+            fixedSize: Size(100, double.infinity),
+          ),
+          child: Text(
+            '申請',
+            style: TextStyle(
+              fontSize: 25,
+            ),
+          ),
         ),
       ),
+    ],
+  ),
+);
+}
+// 広い画面のレイアウト
+Widget wideLayout() {
+  return Container(
+    // width: 800,
+    padding: EdgeInsets.only(left: 300, right: 300),
+    child: Column(
+    children: <Widget>[
+      // 曜日のリストを縦に並べる
+      Column(
+        children: weekdays.map((day) {
+          return Container(
+            margin: EdgeInsets.only(top: 20, bottom: 0), // 上下にスペースを追加
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(top: 0, left: 20, right: 0, bottom: 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        day,
+                        style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold,
+                          backgroundColor: Colors.white.withOpacity(0.5), // 50%透明な白色
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10), // テキストと入力フィールドの間にスペースを追加
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9:]')
+                      ),
+                    ],
+                    controller: _startTimeControllers[day],
+                    decoration: InputDecoration(
+                       // 背景色を設定
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: '開始希望時刻を入力してください',
+                      labelText: '開始希望時刻',
+                      border: OutlineInputBorder(),
+                    ),
+                    onTap: () {
+                      if (isMobile) {
+                        // モバイル用の処理（この部分は後で追加するかもしれません）
+                      }
+                      _showTimePicker(context, _startTimeControllers[day]!);
+                    },
+                  ),
+                ),
+                Padding(padding: EdgeInsets.only(top: 10)),
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9:]')
+                      ),
+                    ],
+                    controller: _endTimeControllers[day],
+                    decoration: InputDecoration(
+                       // 背景色を設定
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: '終了希望時刻を入力してください',
+                      labelText: '終了希望時刻',
+                      border: OutlineInputBorder(),
+                    ),
+                    onTap: () {
+                      if (isMobile) {
+                        // モバイル用の処理（この部分は後で追加するかもしれません）
+                      }
+                      _showTimePicker(context, _endTimeControllers[day]!);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+      // ボタンの配置
+      Container(
+        padding: EdgeInsets.only(top: 30, bottom: 50),
+        child: ElevatedButton(
+          onPressed: () {
+            _saveData();
+            String userEmail = _user?.email ?? ''; // ログインユーザーのメールアドレスを取得
+            sendEventToSheet(events, userEmail);
+          },
+          style: ElevatedButton.styleFrom(
+            fixedSize: Size(100, 90),
+          ),
+          child: Text(
+            '申請',
+            style: TextStyle(
+              fontSize: 25,
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  );
+  
+}
+
+ 
+
+ Future<void> _showTimePicker(BuildContext context, TextEditingController controller) async {
+    if (kIsWeb) {
+      // Webの場合
+      TimeOfDay? picked = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (BuildContext ddcontext, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+            child: child!,
     );
+        },
+      );
+      if (picked != null) {
+        setState(() {
+          controller.text = picked.format(context);
+        });
+      }
+    } else {
+      // モバイルの場合
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext builder) {
+          return Container(
+            height: MediaQuery.of(context).copyWith().size.height / 10,
+            width: double.infinity,
+            child: TimePickerSpinnerPopUp(
+              mode: CupertinoDatePickerMode.time,
+              initTime: DateTime.now(),
+              onChange: (dateTime) {
+                setState(() {
+                  controller.text = dateTime.toString().substring(11, 16);
+                });
+              },
+            ),
+          );
+        },
+      );
+    }
   }
 
-  void _showTimePicker(BuildContext context, TextEditingController controller) {
-    if (Platform.isAndroid || Platform.isIOS) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return Container(
-          height: MediaQuery.of(context).copyWith().size.height / 10,
-          width: double.infinity,
-          child: TimePickerSpinnerPopUp(
-            mode: CupertinoDatePickerMode.time,
-            initTime: DateTime.now(),
-            onChange: (dateTime) {
-              setState(() {
-                controller.text = dateTime.toString().substring(11, 16);
-              });
-            },
-          ),
-        );
-      },
-    );
-  } else {
-    // Webの場合
-  }
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return Container(
-          height: MediaQuery.of(context).copyWith().size.height / 10,
-          width: double.infinity,
-          child: TimePickerSpinnerPopUp(
-            mode: CupertinoDatePickerMode.time,
-            initTime: DateTime.now(),
-            onChange: (dateTime) {
-              setState(() {
-                controller.text = dateTime.toString().substring(11, 16); // 時間部分のみを表示
-              });
-            },
-          ),
-        );
-      },
-    );
-  }
 
   void _saveData() async {
      

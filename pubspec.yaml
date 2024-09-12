@@ -77,6 +77,8 @@ flutter:
 
   assets:
     - assets/gulife-432605-83b7d2b64fd3.json
+    - assets/images/david-brooke-martin-lFTtQqVfx6g-unsplash.jpg
+    - assets/images/jerome-prax-cr6U8ilcdIc-unsplash.jpg
 
 flutter_icons:       
   android: true
