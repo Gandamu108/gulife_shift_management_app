@@ -6,7 +6,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 // セルの色を変更する関数
 Future<void> writeToSpreadsheetAndChangeColor(
     String startTime, String endTime, List<String> formattedDateList, String userEmail) async {
@@ -118,14 +117,13 @@ int _getRowIndex(String cell) {
   return int.parse(cell.substring(1)) - 1;
 }
 
-
 // イベントデータをスプレッドシートに送信する関数
-Future<void> sendEventToSheet(Map<DateTime, List<String>> events, String _userEmail) async {
-  final _credentials = await rootBundle.loadString('assets/gulife-432605-83b7d2b64fd3.json');
-  final _spreadsheetId = '1b3FHCRutgJEzoS6NAvGiJ6iPeBCUlVEnDfX4EbX8v7w';
-  final _range = 'シート1!A1'; 
+Future<void> sendEventToSheet(Map<DateTime, List<String>> events, String userEmail) async {
+  final credentials = await rootBundle.loadString('assets/gulife-432605-83b7d2b64fd3.json');
+  final spreadsheetId = '1b3FHCRutgJEzoS6NAvGiJ6iPeBCUlVEnDfX4EbX8v7w';
+  final range = 'シート1!A1';
 
-  final jsonCredentials = json.decode(_credentials);
+  final jsonCredentials = json.decode(credentials);
   final serviceAccountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
   final scopes = [
     'https://www.googleapis.com/auth/spreadsheets',
@@ -139,7 +137,7 @@ Future<void> sendEventToSheet(Map<DateTime, List<String>> events, String _userEm
   events.forEach((date, eventList) {
     final dateString = DateFormat('yyyy-MM-dd-EEE', 'ja_JP').format(date);
     final eventsString = eventList.join(', ');
-    rows.add([dateString, eventsString, _userEmail]);
+    rows.add([dateString, eventsString, userEmail]);
   });
 
   final valueRange = ValueRange.fromJson({
@@ -149,8 +147,8 @@ Future<void> sendEventToSheet(Map<DateTime, List<String>> events, String _userEm
   try {
     final response = await sheetsApi.spreadsheets.values.append(
       valueRange,
-      _spreadsheetId,
-      _range,
+      spreadsheetId,
+      range,
       valueInputOption: 'RAW',
     );
 
@@ -165,7 +163,7 @@ Future<void> sendEventToSheet(Map<DateTime, List<String>> events, String _userEm
 Future<List<List<Object?>>> fetchSpreadsheetDataForUser() async {
   final credentials = await rootBundle.loadString('assets/gulife-432605-83b7d2b64fd3.json');
   final spreadsheetId = '1b3FHCRutgJEzoS6NAvGiJ6iPeBCUlVEnDfX4EbX8v7w';
-  final range = 'シート1!A1:Z'; 
+  final range = 'シート1!A1:Z';
 
   final jsonCredentials = json.decode(credentials);
   final serviceAccountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
@@ -186,10 +184,10 @@ Future<List<List<Object?>>> fetchSpreadsheetDataForUser() async {
   try {
     final response = await sheetsApi.spreadsheets.values.get(spreadsheetId, range);
     final values = response.values ?? [];
-    
+
     // ユーザーのメールアドレスに基づいてフィルタリング
     final filteredValues = values.where((row) => row.length > 2 && row[2] == userEmail).toList();
-    
+
     return filteredValues;
   } catch (e) {
     print('Error: $e');

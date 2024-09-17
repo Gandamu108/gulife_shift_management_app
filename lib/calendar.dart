@@ -46,9 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Positioned.fill(
             child: Image.asset(
-              'assets/images/jerome-prax-cr6U8ilcdIc-unsplash.jpg',
+              // <a href="https://unsplash.com/ja/%E5%86%99%E7%9C%9F/%E8%B5%A4%E9%BB%84%E3%83%94%E3%83%B3%E3%82%AF%E3%81%AE%E6%8A%BD%E8%B1%A1%E7%94%BB-RAZU_R66vUc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>の<a href="https://unsplash.com/ja/@ricvath?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Richard Horvath</a>が撮影した写真
+  
+              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
               fit: BoxFit.cover,
-              
             ),
           ),
           Column(
@@ -87,15 +88,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        color: Colors.white.withOpacity(0.5), // 背景色を設定
+                        color: Colors.white.withOpacity(1.0), // 背景色を設定
                         child: TableCalendar(
                             headerStyle: HeaderStyle(
                             formatButtonVisible: false,
                             titleCentered: true,
                             // ヘッダーの背景色を設定
                             titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-                            leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
-                            rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white),
                           ),
                           calendarStyle: CalendarStyle(
                             defaultTextStyle: TextStyle(color: Colors.black),
@@ -170,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: [
           Container(
-            color: Colors.white.withOpacity(0.8), // 背景色を設定
+            // color: Colors.white.withOpacity(0.8), // 背景色を設定
             child: Text(
             "${_formattedDateList.toString()}",
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

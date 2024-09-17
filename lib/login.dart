@@ -13,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   String infoText = '';
   String email = '';
   String password = '';
-
+  bool _isObscure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
           // 背景画像
           Positioned.fill(
             child: Image.asset(
-              'assets/images/jerome-prax-cr6U8ilcdIc-unsplash.jpg',
+              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -55,18 +55,23 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(
-            Icons.account_circle,
-            size: 500,
-            color: Colors.black,
-          ),
+          // Icon(
+          //   Icons.account_circle,
+          //   size: 500,
+          //   color: Colors.black,
+          // ),
           SizedBox(height: 20),
           Container(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
               children: <Widget>[
+                // メールアドレスのUI
                 TextFormField(
                   decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.black,
+                      ),
                     // 背景色を設定
                     fillColor: Colors.white,
                     filled: true,
@@ -82,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 SizedBox(height: 20),
+                // パスワードのUI
                 TextFormField(
                   decoration: InputDecoration(
                     // 背景色を設定
@@ -91,8 +97,17 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     labelText: 'パスワード',
+                    // アイコン追加
+                    suffixIcon: IconButton(
+                      icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: _isObscure,
                   onChanged: (String value) {
                     setState(() {
                       password = value;
@@ -163,6 +178,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // 広い画面用のUI
   Widget wideLayout() {
+    
     return Container(
       padding: EdgeInsets.all(24),
       width: 600,
@@ -172,10 +188,10 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(
-            Icons.account_circle,
-            size: 500,
-          ),
+          // Icon(
+          //   Icons.account_circle,
+          //   size: 500,
+          // ),
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
@@ -203,8 +219,17 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               labelText: 'パスワード',
+              suffixIcon: IconButton(
+                icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                // アイコンがタップされたら現在と逆のアイコンを表示する
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: _isObscure,
             onChanged: (String value) {
               setState(() {
                 password = value;
