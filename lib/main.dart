@@ -412,7 +412,6 @@ Widget wideLayout() {
 
 
   void _saveData() async {
-     
     Map<DateTime, List<String>> newEvents = {}; // 新しいイベントマップ
     final int maxEventsPerDay = 1; // 1日あたりの最大イベント数
 
@@ -429,133 +428,76 @@ Widget wideLayout() {
 
     // 現在の日付
     DateTime now = DateTime.now();
-    // // 翌月にする
-    // DateTime nextMonthFirstDay = (now.month == 12)
-    //   ? DateTime(now.year + 1, 1, 1)
-    //   : DateTime(now.year, now.weekday + 1, 1);
-    // 今月の初日
-    DateTime thisMonthFirstDay = DateTime(now.year, now.month, 1);
-  //   // 各曜日について処理
-  //   for (var weekday in weekdayNames.keys) {
-  //     String dayName = weekdayNames[weekday]!;
+    // 翌月の初日を計算
+    DateTime nextMonthFirstDay = (now.month == 12)
+      ? DateTime(now.year + 1, 1, 1)
+      : DateTime(now.year, now.month + 1, 1);
 
-  //     // コントローラーが null でないことを確認する
-  //     if (_startTimeControllers[dayName] != null && _endTimeControllers[dayName] != null) {
-  //       String startTime = _startTimeControllers[dayName]!.text;
-  //       String endTime = _endTimeControllers[dayName]!.text;
+    // 各曜日について処理
+    for (var weekday in weekdayNames.keys) {
+      String dayName = weekdayNames[weekday]!;
 
-  //       // 次の対応する曜日の日付を計算
-  //       DateTime nextWeekday = _getNextWeekday(nextMonthFirstDay, weekday);
+      // コントローラーが null でないことを確認する
+      if (_startTimeControllers[dayName] != null && _endTimeControllers[dayName] != null) {
+        String startTime = _startTimeControllers[dayName]!.text;
+        String endTime = _endTimeControllers[dayName]!.text;
 
-  //       // 月ごとのイベントを追加
-  //       while (nextWeekday.month == nextMonthFirstDay.month) {
-  //         if (newEvents.containsKey(nextWeekday)) {
-  //           if (startTime.isNotEmpty) {
-  //             newEvents[nextWeekday]!.add('開始希望時間: $startTime');
-  //           }
-  //           if (endTime.isNotEmpty) {
-  //             newEvents[nextWeekday]!.add('終了希望時間: $endTime');
-  //           }
-  //         } else {
-  //           //新しいイベントを追加
-  //           newEvents[nextWeekday] = [];
-  //           if (startTime.isNotEmpty) {
-  //             newEvents[nextWeekday]!.add('開始希望時間: $startTime');
-  //           }
-  //           if (endTime.isNotEmpty) {
-  //             newEvents[nextWeekday]!.add('終了希望時間: $endTime');
-  //           }
-  //         }
-  //         nextWeekday = nextWeekday.add(Duration(days: 7)); // 次の週の同じ曜日
-  //       }
-  //     }
-  //   }
+        // 次の対応する曜日の日付を計算
+        DateTime nextWeekday = _getNextWeekday(nextMonthFirstDay, weekday);
 
-  //   // ソートしてから追加
-  //   final sortedKeys = newEvents.keys.toList()..sort();
-  //   for (var key in sortedKeys) {
-  //     if (events.containsKey(key)) {
-  //       if (events[key]!.length < maxEventsPerDay) {
-  //         events[key]!.addAll(newEvents[key]!);
-  //       }
-  //     } else {
-  //       events[key] = newEvents[key]!;
-  //     }
-  //   }
-
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => MyHomePage(title: 'gulife', events: events),
-  //     ),
-  //   );
-  // }
-
-  // DateTime _getNextWeekday(DateTime referenceDate, int weekday) {
-  //   int daysToNextWeekday = (weekday - referenceDate.weekday + 7) % 7;
-  //   if (daysToNextWeekday == 0) daysToNextWeekday = 7;
-  //   return referenceDate.add(Duration(days: daysToNextWeekday));
-  // }
-// }
- // 各曜日について処理
-  for (var weekday in weekdayNames.keys) {
-    String dayName = weekdayNames[weekday]!;
-
-    // コントローラーが null でないことを確認する
-    if (_startTimeControllers[dayName] != null && _endTimeControllers[dayName] != null) {
-      String startTime = _startTimeControllers[dayName]!.text;
-      String endTime = _endTimeControllers[dayName]!.text;
-
-      // 次の対応する曜日の日付を計算
-      DateTime nextWeekday = _getNextWeekday(thisMonthFirstDay, weekday);
-
-      // 今月のイベントを追加
-      while (nextWeekday.month == thisMonthFirstDay.month) {
-        if (newEvents.containsKey(nextWeekday)) {
-          if (startTime.isNotEmpty) {
-            newEvents[nextWeekday]!.add('開始希望時間: $startTime');
+        // 月ごとのイベントを追加
+        while (nextWeekday.month == nextMonthFirstDay.month) {
+          if (newEvents.containsKey(nextWeekday)) {
+            if (startTime.isNotEmpty) {
+              newEvents[nextWeekday]!.add('開始希望時間: $startTime');
+            }
+            if (endTime.isNotEmpty) {
+              newEvents[nextWeekday]!.add('終了希望時間: $endTime');
+            }
+          } else {
+            // 新しいイベントを追加
+            newEvents[nextWeekday] = [];
+            if (startTime.isNotEmpty) {
+              newEvents[nextWeekday]!.add('開始希望時間: $startTime');
+            }
+            if (endTime.isNotEmpty) {
+              newEvents[nextWeekday]!.add('終了希望時間: $endTime');
+            }
           }
-          if (endTime.isNotEmpty) {
-            newEvents[nextWeekday]!.add('終了希望時間: $endTime');
-          }
-        } else {
-          // 新しいイベントを追加
-          newEvents[nextWeekday] = [];
-          if (startTime.isNotEmpty) {
-            newEvents[nextWeekday]!.add('開始希望時間: $startTime');
-          }
-          if (endTime.isNotEmpty) {
-            newEvents[nextWeekday]!.add('終了希望時間: $endTime');
-          }
+          nextWeekday = nextWeekday.add(Duration(days: 7)); // 次の週の同じ曜日
         }
-        nextWeekday = nextWeekday.add(Duration(days: 7)); // 次の週の同じ曜日
       }
     }
-  }
 
-  // ソートしてから追加
-  final sortedKeys = newEvents.keys.toList()..sort();
-  for (var key in sortedKeys) {
-    if (events.containsKey(key)) {
-      if (events[key]!.length < maxEventsPerDay) {
-        events[key]!.addAll(newEvents[key]!);
+    // ソートしてから追加
+    final sortedKeys = newEvents.keys.toList()..sort();
+    for (var key in sortedKeys) {
+      if (events.containsKey(key)) {
+        if (events[key]!.length < maxEventsPerDay) {
+          events[key]!.addAll(newEvents[key]!);
+        }
+      } else {
+        events[key] = newEvents[key]!;
       }
-    } else {
-      events[key] = newEvents[key]!;
     }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(title: 'gulife', events: events),
+      ),
+    );
   }
 
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => MyHomePage(title: 'gulife', events: events),
-    ),
-  );
+  DateTime _getNextWeekday(DateTime referenceDate, int weekday) {
+    int daysToNextWeekday = (weekday - referenceDate.weekday + 7) % 7;
+    if (daysToNextWeekday == 0) daysToNextWeekday = 7;
+    return referenceDate.add(Duration(days: daysToNextWeekday));
+  }
 }
-
+ 
 DateTime _getNextWeekday(DateTime referenceDate, int weekday) {
   int daysToNextWeekday = (weekday - referenceDate.weekday + 7) % 7;
   if (daysToNextWeekday == 0) daysToNextWeekday = 7;
   return referenceDate.add(Duration(days: daysToNextWeekday));
-}
 }

@@ -318,6 +318,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void _saveData() async {
     _startTime = _startTimeController.text;
     _endTime = _endTimeController.text;
+
+    // 次月の日付を計算
+    DateTime now = DateTime.now();
+    DateTime nextMonth = DateTime(now.year, now.month + 1, 1);
+
+    // イベントデータをカレンダーに追加
+    for (var date in selectedDays) {
+      DateTime eventDate = DateTime(nextMonth.year, nextMonth.month, date.day);
+      widget.events[eventDate] = [
+        '開始��間: $_startTime',
+        '終了時間: $_endTime',
+        ...?widget.events[eventDate], // 既存のイベントを保持
+      ];
+    }
+
     print("$_formattedDateList\n開始時間: $_startTime\n終了時間: $_endTime");
     Navigator.push(
       context,
