@@ -450,6 +450,7 @@ class AccountPage extends StatefulWidget {
   _AccountPageState createState() => _AccountPageState();
 }
 
+// アカウント表示
 class _AccountPageState extends State<AccountPage> {
   final storage = FlutterSecureStorage();
   String? storedPassword; // パスワードを保存する変数
