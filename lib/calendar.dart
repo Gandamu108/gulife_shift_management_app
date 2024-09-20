@@ -41,13 +41,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.account_circle), // アカウントアイコン
+            onPressed: () {
+              // アカウントページへの遷移処理
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AccountPage(user: FirebaseAuth.instance.currentUser)), // ユーザー情報を渡す
+              );
+            },
+          ),
+        ],
+      ),
       backgroundColor: Colors.transparent, // 背景色を透明に設定
       body: Stack(
         children: <Widget>[
           Positioned.fill(
             child: Image.asset(
               // <a href="https://unsplash.com/ja/%E5%86%99%E7%9C%9F/%E8%B5%A4%E9%BB%84%E3%83%94%E3%83%B3%E3%82%AF%E3%81%AE%E6%8A%BD%E8%B1%A1%E7%94%BB-RAZU_R66vUc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>の<a href="https://unsplash.com/ja/@ricvath?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Richard Horvath</a>が撮影した写真
-  
               'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
               fit: BoxFit.cover,
             ),
@@ -55,33 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppBar(
-                backgroundColor: const Color.fromARGB(255, 206, 206, 206),
-                title: Container(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text('gulife シフト管理'),
-                      Padding(padding: EdgeInsets.only(left: 15)),
-                      Icon(
-                        Icons.calendar_month,
-                        size: 30,
-                      ),
-                      if (_user != null) ...[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Center(
-                            child: Text(
-                              'ログインユーザー: ${_user!.email}',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -90,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Container(
                         color: Colors.white.withOpacity(1.0), // 背景色を設定
                         child: TableCalendar(
-                            headerStyle: HeaderStyle(
+                          headerStyle: HeaderStyle(
                             formatButtonVisible: false,
                             titleCentered: true,
                             // ヘッダーの背景色を設定
@@ -104,37 +91,37 @@ class _MyHomePageState extends State<MyHomePage> {
                               shape: BoxShape.circle,
                             ),
                             selectedTextStyle: TextStyle(color: Colors.white),
-                              todayDecoration: BoxDecoration(
-                                color: Colors.orange, // 今日の日付の背景色
-                                shape: BoxShape.circle,
-                              ),
-                              todayTextStyle: TextStyle(color: Colors.white),
+                            todayDecoration: BoxDecoration(
+                              color: Colors.orange, // 今日の日付の背景色
+                              shape: BoxShape.circle,
                             ),
-                            locale: 'ja_JP',
-                            firstDay: DateTime.utc(2000, 1, 1),
-                            lastDay: DateTime.utc(3000, 12, 31),
-                            focusedDay: _focused,
-                            eventLoader: (date) {
-                              final keyDate = DateTime(date.year, date.month, date.day); // 時間部分を無視
-                              return widget.events[keyDate] ?? [];
-                            },
-                            selectedDayPredicate: (day) {
-                              return selectedDays.any((selectedDay) => DateTime(selectedDay.year, selectedDay.month, selectedDay.day) == DateTime(day.year, day.month, day.day));
-                            },
-                            onDaySelected: (selected, focused) {
-                              setState(() {
-                                _selected = selected;
-                                _focused = focused;
-                                _selectedEvents = widget.events[DateTime(selected.year, selected.month, selected.day)] ?? [];
-                              });
-                              if (selectedDays.any((selectedDay) => DateTime(selectedDay.year, selectedDay.month, selectedDay.day) == DateTime(selected.year, selected.month, selected.day))) {
-                                selectedDays.remove(selected);
-                              } else {
-                                selectedDays.add(selected);
-                              }
-                              formatSelectedDays();
-                              print(_formattedDateList);
-                            },
+                            todayTextStyle: TextStyle(color: Colors.white),
+                          ),
+                          locale: 'ja_JP',
+                          firstDay: DateTime.utc(2000, 1, 1),
+                          lastDay: DateTime.utc(3000, 12, 31),
+                          focusedDay: _focused,
+                          eventLoader: (date) {
+                            final keyDate = DateTime(date.year, date.month, date.day); // 時間部分を無視
+                            return widget.events[keyDate] ?? [];
+                          },
+                          selectedDayPredicate: (day) {
+                            return selectedDays.any((selectedDay) => DateTime(selectedDay.year, selectedDay.month, selectedDay.day) == DateTime(day.year, day.month, day.day));
+                          },
+                          onDaySelected: (selected, focused) {
+                            setState(() {
+                              _selected = selected;
+                              _focused = focused;
+                              _selectedEvents = widget.events[DateTime(selected.year, selected.month, selected.day)] ?? [];
+                            });
+                            if (selectedDays.any((selectedDay) => DateTime(selectedDay.year, selectedDay.month, selectedDay.day) == DateTime(selected.year, selected.month, selected.day))) {
+                              selectedDays.remove(selected);
+                            } else {
+                              selectedDays.add(selected);
+                            }
+                            formatSelectedDays();
+                            print(_formattedDateList);
+                          },
                         ),
                       ),
                       
@@ -172,7 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
             // color: Colors.white.withOpacity(0.8), // 背景色を設定
             child: Text(
             "${_formattedDateList.toString()}",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.bold
+              ),     
           ),
           ),
           Container(
@@ -327,7 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var date in selectedDays) {
       DateTime eventDate = DateTime(nextMonth.year, nextMonth.month, date.day);
       widget.events[eventDate] = [
-        '開始��間: $_startTime',
+        '開始間: $_startTime',
         '終了時間: $_endTime',
         ...?widget.events[eventDate], // 既存のイベントを保持
       ];

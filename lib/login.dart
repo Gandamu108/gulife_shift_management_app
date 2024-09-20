@@ -14,6 +14,18 @@ class _LoginPageState extends State<LoginPage> {
   String email = '';
   String password = '';
   bool _isObscure = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStoredCredentials(); // 初期化時にストレージから読み込む
+  }
+
+  Future<void> _loadStoredCredentials() async {
+    email = await storage.read(key: "email") ?? '';
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,11 +67,6 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          // Icon(
-          //   Icons.account_circle,
-          //   size: 500,
-          //   color: Colors.black,
-          // ),
           SizedBox(height: 20),
           Container(
             padding: EdgeInsets.only(left: 20, right: 20),
@@ -178,7 +185,6 @@ class _LoginPageState extends State<LoginPage> {
 
   // 広い画面用のUI
   Widget wideLayout() {
-    
     return Container(
       padding: EdgeInsets.all(24),
       width: 600,
@@ -188,14 +194,9 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          // Icon(
-          //   Icons.account_circle,
-          //   size: 500,
-          // ),
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              // 背景色を設定
               fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
@@ -212,7 +213,6 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              // 背景色を設定
               fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
@@ -221,7 +221,6 @@ class _LoginPageState extends State<LoginPage> {
               labelText: 'パスワード',
               suffixIcon: IconButton(
                 icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
-                // アイコンがタップされたら現在と逆のアイコンを表示する
                 onPressed: () {
                   setState(() {
                     _isObscure = !_isObscure;
@@ -295,3 +294,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
