@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'google_sheet.dart'; // fetchSpreadsheetDataForUser() をインポート
 
-class SpreadsheetDataPage extends StatefulWidget {
+class EditingPage extends StatefulWidget {
   @override
-  _SpreadsheetDataPageState createState() => _SpreadsheetDataPageState();
+  _EditingPageState createState() => _EditingPageState();
 }
 
-class _SpreadsheetDataPageState extends State<SpreadsheetDataPage> {
+class _EditingPageState extends State<EditingPage> {
   Future<List<List<Object?>>>? _data; // 型を変更
 
   @override
@@ -21,7 +21,7 @@ class _SpreadsheetDataPageState extends State<SpreadsheetDataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('履歴'),
+        title: Text('編集'),
       ),
       body: Container(
         child: FutureBuilder<List<List<Object?>>>(

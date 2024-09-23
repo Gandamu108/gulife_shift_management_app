@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
+import 'google_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; 
+import 'package:intl/date_symbol_data_local.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'editing.dart';
+import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'google_sheet.dart';
@@ -9,6 +22,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
 import 'view.dart';
 import 'main.dart';
+
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title, required this.events}) : super(key: key);
@@ -22,41 +37,46 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   User? _user;
+  @override
+  void initState() {
+    super.initState();
+    _user = FirebaseAuth.instance.currentUser; // ユーザーを取得
+  }
+
   String _startTime = '';
   String _endTime = '';
   DateTime _focused = DateTime.now();
   DateTime? _selected;
   DateFormat dateFormat = DateFormat('yyyy-MM-dd-EEE', 'ja_JP');
   final List<DateTime> selectedDays = [];
-  
   String _formattedDate = '';
   List<String> _formattedDateList = [];
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _endTimeController = TextEditingController();
   bool _isChecked = false;
   List<String> _selectedEvents = [];
   bool isMobile = !kIsWeb;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('シフト申請カレンダー'),
         actions: [
           IconButton(
             icon: Icon(Icons.account_circle), // アカウントアイコン
             onPressed: () {
-              // アカウントページへの遷移処理
+              User? user = FirebaseAuth.instance.currentUser;
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AccountPage(user: FirebaseAuth.instance.currentUser)), // ユーザー情報を渡す
+                MaterialPageRoute(builder: (context) => AccountPage(user: user)),
               );
             },
           ),
         ],
       ),
-      backgroundColor: Colors.transparent, // 背景色を透明に設定
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: <Widget>[
           Positioned.fill(
@@ -75,34 +95,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        color: Colors.white.withOpacity(1.0), // 背景色を設定
+                        color: Colors.white.withOpacity(1.0),
+                        // カレンダー表示
                         child: TableCalendar(
+                           // カレンダーの上の部分のスタイルを変えるためのやつ
                           headerStyle: HeaderStyle(
-                            formatButtonVisible: false,
-                            titleCentered: true,
-                            // ヘッダーの背景色を設定
-                            titleTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-                          ),
-                          calendarStyle: CalendarStyle(
-                            defaultTextStyle: TextStyle(color: Colors.black),
-                            weekendTextStyle: TextStyle(color: Colors.red),
-                            selectedDecoration: BoxDecoration(
-                              color: Colors.blue, // 選択された日付の背景色
-                              shape: BoxShape.circle,
-                            ),
-                            selectedTextStyle: TextStyle(color: Colors.white),
-                            todayDecoration: BoxDecoration(
-                              color: Colors.orange, // 今日の日付の背景色
-                              shape: BoxShape.circle,
-                            ),
-                            todayTextStyle: TextStyle(color: Colors.white),
+                              formatButtonVisible: false,
+                              titleCentered: true, 
                           ),
                           locale: 'ja_JP',
                           firstDay: DateTime.utc(2000, 1, 1),
                           lastDay: DateTime.utc(3000, 12, 31),
                           focusedDay: _focused,
                           eventLoader: (date) {
-                            final keyDate = DateTime(date.year, date.month, date.day); // 時間部分を無視
+                            final keyDate = DateTime(date.year, date.month, date.day);
                             return widget.events[keyDate] ?? [];
                           },
                           selectedDayPredicate: (day) {
@@ -113,7 +119,19 @@ class _MyHomePageState extends State<MyHomePage> {
                               _selected = selected;
                               _focused = focused;
                               _selectedEvents = widget.events[DateTime(selected.year, selected.month, selected.day)] ?? [];
+                              _startTimeController.text = ''; // 初期化
+                              _endTimeController.text = ''; // 初期化
+                              // 選択した日のイベントがあれば、開始・終了時刻を設定
+                              if (_selectedEvents.isNotEmpty) { // リストが空でないことを確認
+                                _startTimeController.text = _selectedEvents[0].split(', ')[0]; // 開始時刻を取得
+                                _endTimeController.text = _selectedEvents[1].split(', ')[0]; // 終了時刻を取得
+                                print(_startTimeController.text);
+                                print(_selectedEvents);
+                              } else {
+                                print("選択されたイベントがありません。");
+                              }
                             });
+                            // 選択した日付を管理
                             if (selectedDays.any((selectedDay) => DateTime(selectedDay.year, selectedDay.month, selectedDay.day) == DateTime(selected.year, selected.month, selected.day))) {
                               selectedDays.remove(selected);
                             } else {
@@ -156,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: [
           Container(
-            // color: Colors.white.withOpacity(0.8), // 背景色を設定
             child: Text(
             "${_formattedDateList.toString()}",
             style: const TextStyle(
@@ -167,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ),
           Container(
-            color: Colors.white, // 背景色を設定
+            color: Colors.white,
             child: Row(
             children: [
               Expanded(
@@ -186,7 +203,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       Icons.access_time,
                       size: 40,
                     ),
-                    hintText: '開始希望時刻を入力してください',
                     labelText: '開始希望時刻 *',
                   ),
                   readOnly: !kIsWeb,
@@ -199,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ),
           Container(
-            color: Colors.white, // 背景色を設定
+            color: Colors.white,
             child: TextFormField(
             keyboardType: TextInputType.number,
             inputFormatters: [
@@ -215,7 +231,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 Icons.access_time_filled_rounded,
                 size: 40,
               ),
-              hintText: '終了希望時刻の入力してください',
               labelText: '終了希望時刻 *',
             ),
             readOnly: !kIsWeb,
@@ -224,7 +239,6 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           ),
-          
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: ElevatedButton(
@@ -245,8 +259,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ElevatedButton(
               onPressed: () {
                 _saveData();
-                String userEmail = _user?.email ?? '';
-                writeToSpreadsheetAndChangeColor(_startTime, _endTime, _formattedDateList, userEmail);
               },
               child: Text("申請"),
               style: ElevatedButton.styleFrom(
@@ -307,27 +319,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _saveData() async {
-    _startTime = _startTimeController.text;
-    _endTime = _endTimeController.text;
+    String startTime = _startTimeController.text;
+    String endTime = _endTimeController.text;
 
-    // 次月の日付を計算
-    DateTime now = DateTime.now();
-    DateTime nextMonth = DateTime(now.year, now.month + 1, 1);
-
-    // イベントデータをカレンダーに追加
+    // 選択された日付にイベントを追加
     for (var date in selectedDays) {
-      DateTime eventDate = DateTime(nextMonth.year, nextMonth.month, date.day);
-      widget.events[eventDate] = [
-        '開始間: $_startTime',
-        '終了時間: $_endTime',
-        ...?widget.events[eventDate], // 既存のイベントを保持
-      ];
+      DateTime eventDate = DateTime(date.year, date.month, date.day);
+      widget.events[eventDate] = [startTime, endTime]; // 選択された日付にイベントを追加
     }
 
-    print("$_formattedDateList\n開始時間: $_startTime\n終了時間: $_endTime");
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SpreadsheetDataPage()),
-    );
+    // スプレッドシートに送信
+    String userEmail = _user?.email ?? '';
+    await sendEventToSheet(startTime, endTime, _formattedDateList, userEmail);
+    
+    // UIのリセット
+    _startTimeController.clear();
+    _endTimeController.clear();
+    selectedDays.clear();
+    _formattedDateList.clear();
+    setState(() {
+      _selectedEvents.clear();
+    });
   }
 }

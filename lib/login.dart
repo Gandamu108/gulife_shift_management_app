@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'main.dart';
+import 'calendar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _loadStoredCredentials(); // 初期化時にストレージから読み込む
+    _loadStoredCredentials();
   }
 
   Future<void> _loadStoredCredentials() async {
@@ -29,25 +30,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 背景画像を設定
       body: Stack(
         children: <Widget>[
-          // 背景画像
           Positioned.fill(
             child: Image.asset(
               'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
               fit: BoxFit.cover,
             ),
           ),
-          // コンテンツのレイアウト
           Center(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 if (constraints.maxWidth < 600) {
-                  // 狭い画面用のレイアウト
                   return narrowLayout();
                 } else {
-                  // 広い画面用のレイアウト
                   return wideLayout();
                 }
               },
@@ -58,7 +54,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // 狭い画面用のUI
   Widget narrowLayout() {
     return Container(
       decoration: BoxDecoration(
@@ -75,11 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 // メールアドレスのUI
                 TextFormField(
                   decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.email,
-                      color: Colors.black,
-                      ),
-                    // 背景色を設定
+                    prefixIcon: Icon(Icons.email, color: Colors.black),
                     fillColor: Colors.white,
                     filled: true,
                     border: OutlineInputBorder(
@@ -97,14 +88,12 @@ class _LoginPageState extends State<LoginPage> {
                 // パスワードのUI
                 TextFormField(
                   decoration: InputDecoration(
-                    // 背景色を設定
                     fillColor: Colors.white,
                     filled: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     labelText: 'パスワード',
-                    // アイコン追加
                     suffixIcon: IconButton(
                       icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
                       onPressed: () {
@@ -125,32 +114,20 @@ class _LoginPageState extends State<LoginPage> {
                 Text(infoText),
                 SizedBox(height: 8),
                 SizedBox(
-                  width: double.infinity,
+                  width: double.infinity,  // 新規登録ボタンを親コンテナに合わせる
                   child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        final FirebaseAuth auth = FirebaseAuth.instance;
-                        await auth.createUserWithEmailAndPassword(
-                          email: email,
-                          password: password,
-                        );
-                        await Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) {
-                            return AttendanceSettingsPage();
-                          }),
-                        );
-                      } catch (e) {
-                        setState(() {
-                          infoText = 'ユーザー登録に失敗しました: ${e.toString()}';
-                        });
-                      }
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UserRegistrationScreen()),
+                      );
                     },
-                    child: Text('ユーザー登録'),
+                    child: Text('新規登録はこちら'),
                   ),
                 ),
                 SizedBox(height: 8),
                 SizedBox(
-                  width: double.infinity,
+                  width: double.infinity,  // ログインボタンを親コンテナに合わせる
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
@@ -163,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                         await storage.write(key: "password", value: password);
                         await Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) {
-                            return AttendanceSettingsPage();
+                            return MyHomePage(title: "", events: {},);
                           }),
                         );
                       } catch (e) {
@@ -183,7 +160,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // 広い画面用のUI
   Widget wideLayout() {
     return Container(
       padding: EdgeInsets.all(24),
@@ -236,35 +212,21 @@ class _LoginPageState extends State<LoginPage> {
             },
           ),
           SizedBox(height: 10),
-          Text(infoText),
-          SizedBox(height: 10),
           SizedBox(
-            width: double.infinity,
+            width: double.infinity,  // 新規登録ボタンを親コンテナに合わせる
             child: ElevatedButton(
-              onPressed: () async {
-                try {
-                  final FirebaseAuth auth = FirebaseAuth.instance;
-                  await auth.createUserWithEmailAndPassword(
-                    email: email,
-                    password: password,
-                  );
-                  await Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) {
-                      return AttendanceSettingsPage();
-                    }),
-                  );
-                } catch (e) {
-                  setState(() {
-                    infoText = 'ユーザー登録に失敗しました: ${e.toString()}';
-                  });
-                }
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserRegistrationScreen()),
+                );
               },
-              child: Text('ユーザー登録'),
+              child: Text('新規登録はこちら'),
             ),
           ),
           SizedBox(height: 10),
           SizedBox(
-            width: double.infinity,
+            width: double.infinity,  // ログインボタンを親コンテナに合わせる
             child: ElevatedButton(
               onPressed: () async {
                 try {
@@ -277,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                   await storage.write(key: "password", value: password);
                   await Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) {
-                      return AttendanceSettingsPage();
+                      return MyHomePage(title: "", events: {},);
                     }),
                   );
                 } catch (e) {
@@ -295,3 +257,211 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+// UserRegistrationScreen
+class UserRegistrationScreen extends StatefulWidget {
+  const UserRegistrationScreen({super.key});
+
+  @override
+  State<UserRegistrationScreen> createState() => _UserRegistrationScreenState();
+}
+
+class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
+  final storage = FlutterSecureStorage();
+  String infoText = '';
+  String email = '';
+  String password = '';
+  bool _isObscure = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStoredCredentials();
+  }
+
+  Future<void> _loadStoredCredentials() async {
+    email = await storage.read(key: "email") ?? '';
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ユーザー登録'),
+      ),
+      body: Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Center(
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                if (constraints.maxWidth < 600) {
+                  return narrowLayout();
+                } else {
+                  return wideLayout();
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget narrowLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              labelText: 'メールアドレス',
+            ),
+            onChanged: (String value) {
+              setState(() {
+                email = value;
+              });
+            },
+          ),
+          SizedBox(height: 20),
+          TextFormField(
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              labelText: 'パスワード',
+              suffixIcon: IconButton(
+                icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
+              ),
+            ),
+            obscureText: _isObscure,
+            onChanged: (String value) {
+              setState(() {
+                password = value;
+              });
+            },
+          ),
+          SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                try {
+                  final FirebaseAuth auth = FirebaseAuth.instance;
+                  await auth.createUserWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  );
+                  await storage.write(key: "email", value: email);
+                  await storage.write(key: "password", value: password);
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  setState(() {
+                    infoText = '登録に失敗しました: ${e.toString()}';
+                  });
+                }
+              },
+              child: Text('登録'),
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(infoText, style: TextStyle(color: Colors.red)),
+        ],
+      ),
+    );
+  }
+
+  Widget wideLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              labelText: 'メールアドレス',
+            ),
+            onChanged: (String value) {
+              setState(() {
+                email = value;
+              });
+            },
+          ),
+          SizedBox(height: 20),
+          TextFormField(
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              labelText: 'パスワード',
+              suffixIcon: IconButton(
+                icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
+              ),
+            ),
+            obscureText: _isObscure,
+            onChanged: (String value) {
+              setState(() {
+                password = value;
+              });
+            },
+          ),
+          SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                try {
+                  final FirebaseAuth auth = FirebaseAuth.instance;
+                  await auth.createUserWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  );
+                  await storage.write(key: "email", value: email);
+                  await storage.write(key: "password", value: password);
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  setState(() {
+                    infoText = '登録に失敗しました: ${e.toString()}';
+                  });
+                }
+              },
+              child: Text('登録'),
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(infoText, style: TextStyle(color: Colors.red)),
+        ],
+      ),
+    );
+  }
+}
