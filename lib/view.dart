@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'google_sheet.dart'; // fetchSpreadsheetDataForUser() をインポート
+import 'package:firebase_auth/firebase_auth.dart';
+import 'main.dart';
 
 class SpreadsheetDataPage extends StatefulWidget {
   @override
@@ -8,6 +10,7 @@ class SpreadsheetDataPage extends StatefulWidget {
 
 class _SpreadsheetDataPageState extends State<SpreadsheetDataPage> {
   Future<List<List<Object?>>>? _data; // 型を変更
+  User? _user;
 
   @override
   void initState() {
@@ -15,6 +18,7 @@ class _SpreadsheetDataPageState extends State<SpreadsheetDataPage> {
     _data = fetchSpreadsheetDataForUser().then((data) {
       return data.map((row) => row.sublist(0, 2)).toList(); // A列とB列のみを取得
     });
+    _user = FirebaseAuth.instance.currentUser; // ユーザーを取得
   }
 
   @override
@@ -22,6 +26,18 @@ class _SpreadsheetDataPageState extends State<SpreadsheetDataPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('履歴'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.account_circle), // アカウントアイコン
+            onPressed: () {
+              User? user = FirebaseAuth.instance.currentUser;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AccountPage(user: user)),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(
         child: FutureBuilder<List<List<Object?>>>(

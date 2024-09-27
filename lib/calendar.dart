@@ -1,29 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'google_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; 
-import 'package:intl/date_symbol_data_local.dart';
-import 'dart:io' show Platform;
-import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart'; 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'editing.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'google_sheet.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
 import 'view.dart';
 import 'main.dart';
-
-
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title, required this.events}) : super(key: key);
@@ -36,12 +24,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  User? _user;
+  User? user;
   @override
   void initState() {
     super.initState();
-    _user = FirebaseAuth.instance.currentUser; // ユーザーを取得
+    user = FirebaseAuth.instance.currentUser; // ユーザーを取得
   }
+
 
   String _startTime = '';
   String _endTime = '';
@@ -57,6 +46,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String> _selectedEvents = [];
   bool isMobile = !kIsWeb;
   CalendarFormat _calendarFormat = CalendarFormat.month;
+  String? userName;
+  String? userEmail;
+
 
   @override
   Widget build(BuildContext context) {
@@ -259,11 +251,12 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ElevatedButton(
               onPressed: () {
                 _saveData();
+                
               },
-              child: Text("申請"),
+              child: Text("追加"),
               style: ElevatedButton.styleFrom(
-                fixedSize: Size(90, 40),
-                textStyle: TextStyle(fontSize: 20),
+                fixedSize: Size(100, 90),
+                textStyle: TextStyle(fontSize: 25),
               ),
             ),
           ),
@@ -329,8 +322,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     // スプレッドシートに送信
-    String userEmail = _user?.email ?? '';
-    await sendEventToSheet(startTime, endTime, _formattedDateList, userEmail);
+    String userEmail = user?.email ?? '';
+    String userNmae = user?.displayName ?? '';
+    await sendEventToSheet(widget.events, userNmae); // widget.eventsを送信
     
     // UIのリセット
     _startTimeController.clear();
@@ -340,5 +334,19 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _selectedEvents.clear();
     });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SpreadsheetDataPage()),
+    );
+  }
+   // ユーザーデータを取得する非同期メソッド
+   Future<void> _loadUserData() async {
+    user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userName = user?.displayName;
+        userEmail = user?.email;
+      });
+    }
   }
 }
