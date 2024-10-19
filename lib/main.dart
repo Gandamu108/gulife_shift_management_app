@@ -13,23 +13,34 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'editing.dart';
-import 'package:flutter/gestures.dart';
 import 'Attendance_management.dart';
-
-
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'db/event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDateFormatting('ja_JP', null);
+  await Hive.initFlutter();
+  Hive.registerAdapter(EventAdapter());
 
   final user = FirebaseAuth.instance.currentUser;
 
+  // ストレージからパスワードを読み込む
+  await _loadStoredCredentials();
+
   runApp(MyApp(initialRoute: user != null ? '/attendance' : '/login'));
 }
+
+Future<void> _loadStoredCredentials() async {
+  final box = await Hive.openBox('userData');
+  String? storedPassword = await box.get('password'); // ストレージからパスワードを読み込む
+  // 必要に応じて、ここで状態を更新する処理を追加
+}
+
+
 
 class MyApp extends StatelessWidget {
   final String initialRoute;
@@ -63,10 +74,14 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
   Map<DateTime, List<String>> events = {};
   User? _user;
   String? storedPassword;
+  String? userName;
+  String? userEmail;
   bool isMobile = !kIsWeb;
+  late Box<Event> box; // ボックスの変数を追加
     
   @override
   void initState() {
+    _openBox();
     super.initState();
     _user = FirebaseAuth.instance.currentUser;
     weekdays.forEach((day) {
@@ -77,10 +92,25 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
   }
   
   Future<void> _loadStoredCredentials() async {
-    final storage = FlutterSecureStorage();
-    storedPassword = await storage.read(key: "password"); // ストレージからパスワードを読み込む
+    final box = await Hive.openBox('userData');
+    storedPassword = await box.get('password'); // ストレージからパスワードを読み込む
+    userName = await box.get('name'); // ユーザー名を読み込む
+    userEmail = await box.get('email'); // ユーザーのメールアドレスを読み込む
     setState(() {}); // 状態を更新
   }
+
+  Future<void> _saveUserData() async {
+  final box = await Hive.openBox('userData');
+  await box.put('name', _user?.displayName);
+  await box.put('email', _user?.email);
+  await box.put('password', storedPassword);
+  }
+
+  Future<void> _openBox() async {
+    box = await Hive.openBox<Event>('events'); // 'events'という名前のボックスを開く
+  }
+
+  
   
   @override
   Widget build(BuildContext context) {
@@ -428,6 +458,7 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
       } else {
         events[key] = newEvents[key]!;
       }
+      
     }
 
     Navigator.push(
@@ -447,14 +478,15 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
 
 class AccountPage extends StatefulWidget {
   final User? user;
+  // final Box<Event> box;
 
-  AccountPage({required this.user});
+
+  AccountPage({required this.user, });
 
   @override
   _AccountPageState createState() => _AccountPageState();
 }
 
-// アカウント表示
 class _AccountPageState extends State<AccountPage> {
   final storage = FlutterSecureStorage();
   String? storedPassword; // パスワードを保存する変数
@@ -462,6 +494,7 @@ class _AccountPageState extends State<AccountPage> {
   String? userName;
   String? userEmail;
   bool _isObscure = true;
+  final String spreadsheetId = '1b3FHCRutgJEzoS6NAvGiJ6iPeBCUlVEnDfX4EbX8v7w'; // スプレッドシートのIDを指定
 
   @override
   void initState() {
@@ -472,16 +505,36 @@ class _AccountPageState extends State<AccountPage> {
 
   // ユーザーデータを取得する非同期メソッド
   Future<void> _loadUserData() async {
-    user = FirebaseAuth.instance.currentUser;
+  user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
     setState(() {
       userName = user?.displayName;
       userEmail = user?.email;
     });
+    await _saveUserData(); // ユーザーデータを保存
   }
+}
+
+    Future<void> _saveUserData() async {
+  final box = await Hive.openBox('userData');
+  await box.put('name', user?.displayName);
+  await box.put('email', user?.email);
+  await box.put('password', storedPassword);
+}
 
   Future<void> _loadStoredCredentials() async {
-    storedPassword = await storage.read(key: "password"); // ストレージからパスワードを読み込む
-    setState(() {}); // 状態を更新
+  final box = await Hive.openBox('userData');
+  storedPassword = await box.get('password'); // ストレージからパスワードを読み込む
+  setState(() {}); // 状態を更新
+}
+
+  Future<void> _deleteUserData() async {
+    // ボックスを開いて、全てのデータを削除
+    Box<Event> box = await Hive.openBox<Event>('events'); // 'events'という名前のボックスを開く
+    await box.clear(); // ボックス内の全てのデータを削除
+    if (userName != null) { // userNameがnullでないことを確認
+      await deleteUserEntries(spreadsheetId, userName!); // userNameを非nullのStringとして渡す
+    }
   }
 
   @override
@@ -511,7 +564,7 @@ class _AccountPageState extends State<AccountPage> {
               child: Text(
                 'メールアドレス: $userEmail',
                 style: TextStyle(fontSize: 20),
-                ),
+              ),
             ),
           ),
           Container(
@@ -519,7 +572,7 @@ class _AccountPageState extends State<AccountPage> {
             child: Text(
               '名前: $userName',
               style: TextStyle(fontSize: 20),
-              ),
+            ),
           ),
           Container(
             padding: EdgeInsets.only(bottom: 10),
@@ -528,57 +581,43 @@ class _AccountPageState extends State<AccountPage> {
                 "パスワード: ${storedPassword ?? '非表示'}",
                 style: TextStyle(fontSize: 20),
               ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Container(
+            child: ElevatedButton(
+              onPressed: () async {
+                // 確認ダイアログを表示
+                bool? confirmDelete = await showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('データ削除確認'),
+                      content: Text('全てのデータを削除しますか？'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('キャンセル'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: Text('削除'),
+                        ),
+                      ],
+                    );
+                  },
+                );
 
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(bottom: 10),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // 編集ボタンの処理
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditingPage(title: '編集',events: {},)),
+                // 確認された場合、データを削除
+                if (confirmDelete == true) {
+                  await _deleteUserData(); // データ削除メソッドを呼び出す
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('全てのデータが削除されました')),
                   );
-                },
-                child: Text('編集'),
-              ),
+                }
+              },
+              child: Text('全データ削除'),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.only(bottom: 10),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SpreadsheetDataPage()),
-                  );
-                },
-                child: Text('履歴'),
-              ),
-            ),
-          ),
-          Center(
-            child: RichText(
-              text: TextSpan(
-                children: <TextSpan>[
-                    TextSpan(
-                      text: '勤怠入力画面へ',
-                      style: TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          // ここにタップ時のアクションを追加します
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AttendanceManagementPage()),
-                          );
-                        },
-                      ),
-                    ]
-                  ),
-                ),
           ),
           SizedBox(height: 10),
           Container(
@@ -606,3 +645,4 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 }
+

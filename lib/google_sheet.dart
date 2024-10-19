@@ -97,61 +97,61 @@ Future<List<List<Object?>>> fetchSpreadsheetDataForUser() async {
   }
 }
 
-Future<void> deleteOldEntries(String spreadsheetId, String range) async {
-  final credentials = await rootBundle.loadString('assets/gulife-432605-83b7d2b64fd3.json');
-  final jsonCredentials = json.decode(credentials);
-  final serviceAccountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
-  final scopes = ['https://www.googleapis.com/auth/spreadsheets'];
+// Future<void> deleteOldEntries(String spreadsheetId, String range) async {
+//   final credentials = await rootBundle.loadString('assets/gulife-432605-83b7d2b64fd3.json');
+//   final jsonCredentials = json.decode(credentials);
+//   final serviceAccountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
+//   final scopes = ['https://www.googleapis.com/auth/spreadsheets'];
 
-  final client = await clientViaServiceAccount(serviceAccountCredentials, scopes);
-  final sheetsApi = SheetsApi(client);
+//   final client = await clientViaServiceAccount(serviceAccountCredentials, scopes);
+//   final sheetsApi = SheetsApi(client);
 
-  try {
-    final response = await sheetsApi.spreadsheets.values.get(spreadsheetId, range);
-    final values = response.values ?? [];
+//   try {
+//     final response = await sheetsApi.spreadsheets.values.get(spreadsheetId, range);
+//     final values = response.values ?? [];
 
-    // 今日の日付を取得
-    final now = DateTime.now();
+//     // 今日の日付を取得
+//     final now = DateTime.now();
 
-    // 古いデータの削除
-    List<int> rowsToDelete = [];
-    for (int i = 0; i < values.length; i++) {
-      if (values[i].isNotEmpty) {
-        // Object? を String にキャスト
-        final rowDateString = values[i][0] as String; // キャストを追加
-        final rowDate = DateFormat('yyyy-MM-dd').parse(rowDateString);
-        // 日付が1ヶ月以上前の場合
-        if (now.difference(rowDate).inDays > 30) {
-          rowsToDelete.add(i);
-        }
-      }
-    }
-    // 行を削除するためのリクエストを作成
-    for (var rowIndex in rowsToDelete.reversed) {
-      final deleteRequest = {
-        "requests": [
-          {
-            "deleteDimension": {
-              "range": {
-                "sheetId": 0,
-                "dimension": "ROWS",
-                "startIndex": rowIndex,
-                "endIndex": rowIndex + 1
-              }
-            }
-          }
-        ]
-      };
-      final batchUpdateRequest = BatchUpdateSpreadsheetRequest.fromJson(deleteRequest);
-      await sheetsApi.spreadsheets.batchUpdate(batchUpdateRequest, spreadsheetId);
-    }
+//     // 古いデータの削除
+//     List<int> rowsToDelete = [];
+//     for (int i = 0; i < values.length; i++) {
+//       if (values[i].isNotEmpty) {
+//         // Object? を String にキャスト
+//         final rowDateString = values[i][0] as String; // キャストを追加
+//         final rowDate = DateFormat('yyyy-MM-dd').parse(rowDateString);
+//         // 日付が1ヶ月以上前の場合
+//         if (now.difference(rowDate).inDays > 30) {
+//           rowsToDelete.add(i);
+//         }
+//       }
+//     }
+//     // 行を削除するためのリクエストを作成
+//     for (var rowIndex in rowsToDelete.reversed) {
+//       final deleteRequest = {
+//         "requests": [
+//           {
+//             "deleteDimension": {
+//               "range": {
+//                 "sheetId": 0,
+//                 "dimension": "ROWS",
+//                 "startIndex": rowIndex,
+//                 "endIndex": rowIndex + 1
+//               }
+//             }
+//           }
+//         ]
+//       };
+//       final batchUpdateRequest = BatchUpdateSpreadsheetRequest.fromJson(deleteRequest);
+//       await sheetsApi.spreadsheets.batchUpdate(batchUpdateRequest, spreadsheetId);
+//     }
 
-  } catch (e) {
-    print('Error: $e');
-  } finally {
-    client.close();
-  }
-}
+//   } catch (e) {
+//     print('Error: $e');
+//   } finally {
+//     client.close();
+//   }
+// }
 
 Future<void> deleteUserEntries(String spreadsheetId, String userName) async {
   final credentials = await rootBundle.loadString('assets/gulife-432605-83b7d2b64fd3.json');

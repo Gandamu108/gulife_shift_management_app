@@ -12,6 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
 import 'view.dart';
 import 'main.dart';
+import 'db/event.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title, required this.events}) : super(key: key);
@@ -25,12 +28,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   User? user;
+  late Box<Event> box; // ボックスの変数を追加
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser; // ユーザーを取得
+    _openBox().then((_) => _loadEvents()); // ボックスを開いた後にイベントを読み込む
   }
+  Future<void> _openBox() async {
+  box = await Hive.openBox<Event>('events'); // 'events'という名前のボックスを開く
+}
 
+Future<void> _loadEvents() async {
+  final allEvents = box.toMap(); // すべてのイベントを取得
+  allEvents.forEach((key, value) {
+    if (value is Event) {
+      DateTime eventDate = value.date;
+      widget.events[eventDate] = [value.startTime, value.endTime]; // イベントをマップに追加
+    }
+  });
+}
 
   String _startTime = '';
   String _endTime = '';
@@ -113,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               _selectedEvents = widget.events[DateTime(selected.year, selected.month, selected.day)] ?? [];
                               _startTimeController.text = ''; // 初期化
                               _endTimeController.text = ''; // 初期化
-                              // 選択した日のイベントがあれば、開始・終了時刻を設定
+                              // 選択した日のイベントがあれば、開始終了時刻を設定
                               if (_selectedEvents.isNotEmpty) { // リストが空でないことを確認
                                 _startTimeController.text = _selectedEvents[0].split(', ')[0]; // 開始時刻を取得
                                 _endTimeController.text = _selectedEvents[1].split(', ')[0]; // 終了時刻を取得
@@ -319,6 +336,23 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var date in selectedDays) {
       DateTime eventDate = DateTime(date.year, date.month, date.day);
       widget.events[eventDate] = [startTime, endTime]; // 選択された日付にイベントを追加
+      String eventId = '${eventDate.toIso8601String()}_$startTime'; // 一意のIDを生成
+
+    Event event = Event(
+      id: eventId,
+      date: eventDate,
+      startTime: startTime,
+      endTime: endTime,
+      userName: user?.displayName ?? '匿名',
+    );
+    // すでに存在するイベントを削除
+    if (await box.containsKey(eventId)) {
+      await box.delete(eventId); // IDを指定して削除
+      print('データが削除されました: $eventId');
+    }
+
+    await box.put(eventId, event); // イベントを保存
+    print('Event ID: ${event.id}, Date: ${event.date}, Start Time: ${event.startTime}, End Time: ${event.endTime}, User Name: ${event.userName}');
     }
 
     // スプレッドシートに送信
@@ -339,6 +373,9 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) => SpreadsheetDataPage()),
     );
   }
+
+
+
    // ユーザーデータを取得する非同期メソッド
    Future<void> _loadUserData() async {
     user = FirebaseAuth.instance.currentUser;
