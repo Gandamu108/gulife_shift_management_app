@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:gulife_shift_management_app/editing.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'google_sheet.dart';
 import 'calendar.dart';
@@ -14,7 +13,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'Attendance_management.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'db/event.dart';
@@ -139,12 +137,12 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
       ),
       body: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           SingleChildScrollView(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -515,7 +513,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 }
 
-    Future<void> _saveUserData() async {
+  Future<void> _saveUserData() async {
   final box = await Hive.openBox('userData');
   await box.put('name', user?.displayName);
   await box.put('email', user?.email);
@@ -581,6 +579,21 @@ class _AccountPageState extends State<AccountPage> {
                 "パスワード: ${storedPassword ?? '非表示'}",
                 style: TextStyle(fontSize: 20),
               ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SpreadsheetDataPage()),
+                  );
+                },
+                child: Text('履歴')
+              )
             ),
           ),
           SizedBox(height: 10),

@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'google_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'editing.dart';
-import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
-import 'google_sheet.dart';
+import 'completion.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
@@ -88,13 +86,13 @@ Future<void> _loadEvents() async {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Image.asset(
-              // <a href="https://unsplash.com/ja/%E5%86%99%E7%9C%9F/%E8%B5%A4%E9%BB%84%E3%83%94%E3%83%B3%E3%82%AF%E3%81%AE%E6%8A%BD%E8%B1%A1%E7%94%BB-RAZU_R66vUc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>の<a href="https://unsplash.com/ja/@ricvath?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Richard Horvath</a>が撮影した写真
-              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     // <a href="https://unsplash.com/ja/%E5%86%99%E7%9C%9F/%E8%B5%A4%E9%BB%84%E3%83%94%E3%83%B3%E3%82%AF%E3%81%AE%E6%8A%BD%E8%B1%A1%E7%94%BB-RAZU_R66vUc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>の<a href="https://unsplash.com/ja/@ricvath?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Richard Horvath</a>が撮影した写真
+          //     'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -134,7 +132,6 @@ Future<void> _loadEvents() async {
                               if (_selectedEvents.isNotEmpty) { // リストが空でないことを確認
                                 _startTimeController.text = _selectedEvents[0].split(', ')[0]; // 開始時刻を取得
                                 _endTimeController.text = _selectedEvents[1].split(', ')[0]; // 終了時刻を取得
-                                print(_startTimeController.text);
                                 print(_selectedEvents);
                               } else {
                                 print("選択されたイベントがありません。");
@@ -152,19 +149,6 @@ Future<void> _loadEvents() async {
                         ),
                       ),
                       
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _selectedEvents.length,
-                        itemBuilder: (context, index) {
-                          final event = _selectedEvents[index];
-                          return Card(
-                            child: ListTile(
-                              title: Text(event),
-                            ),
-                          );
-                        },
-                      ),
                       if (selectedDays.isNotEmpty) _buildNoteInput(),
                     ],
                   ),
@@ -179,106 +163,99 @@ Future<void> _loadEvents() async {
   
   Widget _buildNoteInput() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Container(
-            child: Text(
-            "${_formattedDateList.toString()}",
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-              fontWeight: FontWeight.bold
-              ),     
-          ),
-          ),
-          Container(
-            color: Colors.white,
-            child: Row(
-            children: [
-              Expanded(
-                child: TextFormField(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  color: Colors.white,
+                  child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[a-zA-Z0-9:]')
+                          ),
+                        ],
+                        controller: _startTimeController,
+                        decoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          icon: Icon(
+                            Icons.access_time,
+                            size: 40,
+                          ),
+                          labelText: '開始希望時刻 *',
+                        ),
+                        readOnly: !kIsWeb,
+                        onTap: () {
+                          _showTimePicker(context, _startTimeController);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                ),
+                Container(
+                  color: Colors.white,
+                  child: TextFormField(
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z0-9:]')
+                      RegExp(r'[a-zA-Z0-9:]'),
                     ),
                   ],
-                  controller: _startTimeController,
+                  controller: _endTimeController,
                   decoration: const InputDecoration(
                     fillColor: Colors.white,
                     filled: true,
                     icon: Icon(
-                      Icons.access_time,
+                      Icons.access_time_filled_rounded,
                       size: 40,
                     ),
-                    labelText: '開始希望時刻 *',
+                    labelText: '終了希望時刻 *',
                   ),
                   readOnly: !kIsWeb,
                   onTap: () {
-                    _showTimePicker(context, _startTimeController);
+                    _showTimePicker(context, _endTimeController);
                   },
                 ),
-              ),
-            ],
-          ),
-          ),
-          Container(
-            color: Colors.white,
-            child: TextFormField(
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                RegExp(r'[a-zA-Z0-9:]'),
-              ),
-            ],
-            controller: _endTimeController,
-            decoration: const InputDecoration(
-              fillColor: Colors.white,
-              filled: true,
-              icon: Icon(
-                Icons.access_time_filled_rounded,
-                size: 40,
-              ),
-              labelText: '終了希望時刻 *',
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _startTimeController.clear();
+                      _endTimeController.clear();
+                      selectedDays.clear();
+                      _formattedDateList.clear();
+                      setState(() {
+                        _selectedEvents.clear();
+                      });
+                    },
+                    child: Text('キャンセル'),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _saveData();
+                    },
+                    child: Text("追加"),
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(100, 90),
+                      textStyle: TextStyle(fontSize: 25),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            readOnly: !kIsWeb,
-            onTap: () {
-              _showTimePicker(context, _endTimeController);
-            },
-          ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: ElevatedButton(
-              onPressed: () {
-                _startTimeController.clear();
-                _endTimeController.clear();
-                selectedDays.clear();
-                _formattedDateList.clear();
-                setState(() {
-                  _selectedEvents.clear();
-                });
-              },
-              child: Text('キャンセル'),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: ElevatedButton(
-              onPressed: () {
-                _saveData();
-                
-              },
-              child: Text("追加"),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(100, 90),
-                textStyle: TextStyle(fontSize: 25),
-              ),
-            ),
-          ),
-        ],
-      ),
+      )
     );
   }
 
@@ -370,7 +347,7 @@ Future<void> _loadEvents() async {
     });
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SpreadsheetDataPage()),
+      MaterialPageRoute(builder: (context) => CompletionPage()),
     );
   }
 

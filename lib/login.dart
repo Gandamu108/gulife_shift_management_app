@@ -52,12 +52,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           Center(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -90,23 +90,6 @@ class _LoginPageState extends State<LoginPage> {
                 // メールアドレスのUI
                 TextFormField(
                   decoration: InputDecoration(
-                    // prefixIcon: Icon(Icons.email, color: Colors.black),
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    labelText: 'メールアドレス',
-                  ),
-                  onChanged: (String value) {
-                    setState(() {
-                      email = value;
-                    });
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
                     fillColor: Colors.white,
                     filled: true,
                     border: OutlineInputBorder(
@@ -118,6 +101,23 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       name = value;
                       print(user?.displayName);  // ここでnameの値を確認
+                    });
+                  },
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  decoration: InputDecoration(
+                    // prefixIcon: Icon(Icons.email, color: Colors.black),
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    labelText: 'メールアドレス',
+                  ),
+                  onChanged: (String value) {
+                    setState(() {
+                      email = value;
                     });
                   },
                 ),
@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: <TextSpan>[
                           const TextSpan(
                           text: 'アカウントが未登録ですか？',
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(color: Colors.black)),
                           TextSpan(
                             text: 'アカウントの作成',
                             style: TextStyle(color: Colors.blue),
@@ -241,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: <TextSpan>[
                           const TextSpan(
                           text: '管理者ですか？',
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(color: Colors.black)),
                           TextSpan(
                             text: '管理者専用ログイン画面へ',
                             style: TextStyle(color: Colors.blue),
@@ -277,6 +277,21 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              labelText: '名前',
+              ),
+              onChanged: (String value) {
+                setState(() {
+                  name = value;
+                });
+              },
+          ),
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
@@ -293,22 +308,7 @@ class _LoginPageState extends State<LoginPage> {
               });
             },
           ),
-        SizedBox(height: 20),
-          TextFormField(
-            decoration: InputDecoration(
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              labelText: '名前',
-              ),
-              onChanged: (String value) {
-                setState(() {
-                  name = value;
-                });
-              },
-          ),
+        // SizedBox(height: 20),
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
@@ -342,7 +342,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: <TextSpan>[
                     const TextSpan(
                     text: 'アカウントが未登録ですか？',
-                    style: TextStyle(color: Colors.white)),
+                    style: TextStyle(color: Colors.black)),
                     TextSpan(
                       text: 'アカウントの作成',
                       style: TextStyle(color: Colors.blue),
@@ -426,7 +426,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: <TextSpan>[
                     const TextSpan(
                     text: '管理者ですか？',
-                    style: TextStyle(color: Colors.white)),
+                    style: TextStyle(color: Colors.black)),
                     TextSpan(
                       text: '管理者専用ログイン画面へ',
                       style: TextStyle(color: Colors.blue),
@@ -532,7 +532,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
         children: <Widget>[
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.white,
+              fillColor: Colors.black,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -549,7 +549,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.white,
+              fillColor: Colors.black,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -566,7 +566,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.white,
+              fillColor: Colors.black,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -657,7 +657,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
         children: <Widget>[
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.white,
+              fillColor: Colors.black,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -674,7 +674,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.white,
+              fillColor: Colors.black,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -690,7 +690,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.white,
+              fillColor: Colors.black,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -771,6 +771,4 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
       ),
     );
   }
-
- 
 }
