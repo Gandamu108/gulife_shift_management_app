@@ -233,32 +233,32 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
-                SizedBox(
-                  child: Center(
-                    child: RichText(
-                      text: TextSpan(
-                        children: <TextSpan>[
-                          const TextSpan(
-                          text: '管理者ですか？',
-                          style: TextStyle(color: Colors.black)),
-                          TextSpan(
-                            text: '管理者専用ログイン画面へ',
-                            style: TextStyle(color: Colors.blue),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                // ここにタップ時のアクションを追加します
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => AdminLoginPage()),
-                                );
-                              },
-                          ),
-                        ]
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 20),
+                // SizedBox(
+                //   child: Center(
+                //     child: RichText(
+                //       text: TextSpan(
+                //         children: <TextSpan>[
+                //           const TextSpan(
+                //           text: '管理者ですか？',
+                //           style: TextStyle(color: Colors.black)),
+                //           TextSpan(
+                //             text: '管理者専用ログイン画面へ',
+                //             style: TextStyle(color: Colors.blue),
+                //             recognizer: TapGestureRecognizer()
+                //               ..onTap = () {
+                //                 // ここにタップ時のアクションを追加します
+                //                 Navigator.push(
+                //                   context,
+                //                   MaterialPageRoute(builder: (context) => AdminLoginPage()),
+                //                 );
+                //               },
+                //           ),
+                //         ]
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -418,32 +418,32 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          SizedBox(height: 20),
-          SizedBox(
-            child: Center(
-              child: RichText(
-                text: TextSpan(
-                  children: <TextSpan>[
-                    const TextSpan(
-                    text: '管理者ですか？',
-                    style: TextStyle(color: Colors.black)),
-                    TextSpan(
-                      text: '管理者専用ログイン画面へ',
-                      style: TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          // ここにタップ時のアクションを追加します
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AdminLoginPage()),
-                          );
-                        },
-                    ),
-                  ]
-                ),
-              ),
-            ),
-          ),
+          // SizedBox(height: 20),
+          // SizedBox(
+          //   child: Center(
+          //     child: RichText(
+          //       text: TextSpan(
+          //         children: <TextSpan>[
+          //           const TextSpan(
+          //           text: '管理者ですか？',
+          //           style: TextStyle(color: Colors.black)),
+          //           TextSpan(
+          //             text: '管理者専用ログイン画面へ',
+          //             style: TextStyle(color: Colors.blue),
+          //             recognizer: TapGestureRecognizer()
+          //               ..onTap = () {
+          //                 // ここにタップ時のアクションを追加します
+          //                 Navigator.push(
+          //                   context,
+          //                   MaterialPageRoute(builder: (context) => AdminLoginPage()),
+          //                 );
+          //               },
+          //           ),
+          //         ]
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -502,12 +502,12 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
       ),
       body: Stack(
         children: <Widget>[
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           Center(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -532,7 +532,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
         children: <Widget>[
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -549,7 +549,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -566,7 +566,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -657,7 +657,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
         children: <Widget>[
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -674,7 +674,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -690,7 +690,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           SizedBox(height: 20),
           TextFormField(
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
