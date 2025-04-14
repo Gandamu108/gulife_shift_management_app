@@ -76,6 +76,7 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
   String? userEmail;
   bool isMobile = !kIsWeb;
   late Box<Event> box; // ボックスの変数を追加
+  bool isLoading = false;
     
   @override
   void initState() {
@@ -115,7 +116,7 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        title: const Text('gulife シフト表申請ページ'),
+        title: const Text('シフト表申請ページ'),
         actions: <Widget>[
           if (_user != null) ...[
             Padding(
@@ -174,12 +175,21 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            day,
-                            style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold,
-                              // backgroundColor: Colors.white.withOpacity(0.5),
-                              color: Colors.white,
+                          Padding(
+                            padding: EdgeInsets.only(right: 20.0),
+                            child: Text(
+                              day,
+                              style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.blueGrey,
+                                    offset: Offset(3.0, 7.0),
+                                    blurRadius: 10.0
+                                  )
+                                ]
+                              ),
                             ),
                           ),
                         ],
@@ -242,6 +252,7 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
             padding: EdgeInsets.only(top: 30, bottom: 50),
             child: ElevatedButton(
               onPressed: () {
+                _loadData();
                 _saveData();
                 String userEmail = _user?.email ?? '';
                 sendEventToSheet(events, userEmail);
@@ -345,10 +356,9 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
           Container(
             padding: EdgeInsets.only(top: 30, bottom: 50),
             child: ElevatedButton(
-              onPressed: () {
-                _saveData();
-                // String userEmail = _user?.email ?? '';
-                // sendEventToSheet(events, userEmail);
+              onPressed: () async {
+                await _saveData();
+                await _loadData();
               },
               style: ElevatedButton.styleFrom(
                 fixedSize: Size(100, 90),
@@ -362,6 +372,52 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext contex) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text("読み込み中...", style: TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+        ); 
+      }
+    );
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      isLoading = true; // ローディング開始
+    });
+    showLoadingDialog(context);
+    // 2秒待つ（ここに非同期の処理を入れる）
+    await  Future.delayed(const Duration(seconds: 2));
+    Navigator.of(context, rootNavigator: true).pop();
+    setState(() {
+      isLoading = false; // ローディング終了
+    });
+
+    // ローディング完了後、次の画面へ遷移
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(title: 'gulife', events: events),
       ),
     );
   }
@@ -384,20 +440,23 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
         });
       }
     } else {
-      showModalBottomSheet(
+      showDialog(
         context: context,
-        builder: (BuildContext builder) {
-          return Container(
-            height: MediaQuery.of(context).size.height / 10,
-            width: double.infinity,
-            child: TimePickerSpinnerPopUp(
-              mode: CupertinoDatePickerMode.time,
-              initTime: DateTime.now(),
-              onChange: (dateTime) {
-                setState(() {
-                  controller.text = dateTime.toString().substring(11, 16);
-                });
-              },
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Container(
+              // height: 150,
+              width: 300,
+              child: TimePickerSpinnerPopUp(
+                mode: CupertinoDatePickerMode.time,
+                initTime: DateTime.now(),
+                onChange: (dateTime) {
+                  setState(() {
+                    controller.text = dateTime.toString().substring(11, 16);
+                  });
+                  Navigator.of(context).pop(); // ダイアログを閉じる
+                },
+              ),
             ),
           );
         },
@@ -405,7 +464,7 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
     }
   }
 
-  void _saveData() async {
+  Future<void>  _saveData() async {
     Map<DateTime, List<String>> newEvents = {};
     final int maxEventsPerDay = 1;
 
@@ -459,12 +518,7 @@ class _AttendanceSettingsPageState extends State<AttendanceSettingsPage> {
       
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MyHomePage(title: 'gulife', events: events),
-      ),
-    );
+    
   }
 
   DateTime _getNextWeekday(DateTime referenceDate, int weekday) {

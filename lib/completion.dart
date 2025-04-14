@@ -17,9 +17,9 @@ class _CompletionPageState extends State<CompletionPage> {
         children: [
           Center(
             child: Text(
-              'シフト申請完了！',
+              'シフトが申請されました',
               style: TextStyle(
-                fontSize: 50
+                fontSize: 30
               ),
             ),
           )

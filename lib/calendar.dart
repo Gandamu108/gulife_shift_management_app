@@ -4,15 +4,14 @@ import 'google_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
-import 'completion.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'; 
-import 'view.dart';
 import 'main.dart';
 import 'db/event.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title, required this.events}) : super(key: key);
@@ -63,6 +62,7 @@ Future<void> _loadEvents() async {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   String? userName;
   String? userEmail;
+  bool isLoading = false; // ローディング状態の管理
 
 
   @override
@@ -83,9 +83,10 @@ Future<void> _loadEvents() async {
           ),
         ],
       ),
-      backgroundColor: Colors.transparent,
       body: Stack(
-        children: <Widget>[
+        fit: StackFit.expand,
+        children: [
+          
           // Positioned.fill(
           //   child: Image.asset(
           //     // <a href="https://unsplash.com/ja/%E5%86%99%E7%9C%9F/%E8%B5%A4%E9%BB%84%E3%83%94%E3%83%B3%E3%82%AF%E3%81%AE%E6%8A%BD%E8%B1%A1%E7%94%BB-RAZU_R66vUc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>の<a href="https://unsplash.com/ja/@ricvath?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Richard Horvath</a>が撮影した写真
@@ -162,7 +163,9 @@ Future<void> _loadEvents() async {
   }
   
   Widget _buildNoteInput() {
-    return Padding(
+    return Stack(
+      children: [
+        Padding(
           padding: const EdgeInsets.all(16.0),
           child: Center(
             child: Column(
@@ -242,22 +245,79 @@ Future<void> _loadEvents() async {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _saveData();
-                    },
-                    child: Text("追加"),
+                  child: Center(
+                      child: ElevatedButton(
+                        onPressed:  () async {
+                          await _loadData();
+                          await _saveData();
+                          await _showDialog(context);
+                      },
+                    child: const Text("追加"),
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(100, 90),
                       textStyle: TextStyle(fontSize: 25),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
       )
+    ),
+      ],
     );
   }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 背景タップで閉じないようにする
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text("読み込み中...", style: TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('申請されました'),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                // OKボタンの処理
+                Navigator.of(context).pop();
+                setState(() {
+                  isLoading = false; // ローディング終了
+                });
+
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
 
   Future<void> _showTimePicker(BuildContext context, TextEditingController controller) async {
     if (kIsWeb) {
@@ -277,20 +337,23 @@ Future<void> _loadEvents() async {
         });
       }
     } else {
-      showModalBottomSheet(
+      showDialog(
         context: context,
-        builder: (BuildContext builder) {
-          return Container(
-            height: MediaQuery.of(context).copyWith().size.height / 10,
-            width: double.infinity,
-            child: TimePickerSpinnerPopUp(
-              mode: CupertinoDatePickerMode.time,
-              initTime: DateTime.now(),
-              onChange: (dateTime) {
-                setState(() {
-                  controller.text = dateTime.toString().substring(11, 16);
-                });
-              },
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Container(
+              // height: 150,
+              width: 300,
+              child: TimePickerSpinnerPopUp(
+                mode: CupertinoDatePickerMode.time,
+                initTime: DateTime.now(),
+                onChange: (dateTime) {
+                  setState(() {
+                    controller.text = dateTime.toString().substring(11, 16);
+                  });
+                  Navigator.of(context).pop(); // ダイアログを閉じる
+                },
+              ),
             ),
           );
         },
@@ -305,7 +368,7 @@ Future<void> _loadEvents() async {
     }
   }
 
-  void _saveData() async {
+  Future<void> _saveData() async {
     String startTime = _startTimeController.text;
     String endTime = _endTimeController.text;
 
@@ -345,16 +408,10 @@ Future<void> _loadEvents() async {
     setState(() {
       _selectedEvents.clear();
     });
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CompletionPage()),
-    );
+
   }
-
-
-
    // ユーザーデータを取得する非同期メソッド
-   Future<void> _loadUserData() async {
+  Future<void> _loadUserData() async {
     user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
@@ -363,4 +420,20 @@ Future<void> _loadEvents() async {
       });
     }
   }
+  // 非同期処理
+  Future<void> _loadData() async {
+    setState(() {
+      isLoading = true; // ローディング開始
+    });
+    showLoadingDialog(context);
+    // 2秒待つ（ここに非同期の処理を入れる）
+    await _saveData();
+    Navigator.of(context, rootNavigator: true).pop();
+    setState(() {
+      isLoading = false; // ローディング終了
+    });
+
+
+  }
 }
+

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'main.dart';
 import 'package:flutter/gestures.dart';
-import 'admin_login.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -50,27 +50,29 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          // Positioned.fill(
-          //   child: Image.asset(
-          //     'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
-          Center(
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                if (constraints.maxWidth < 600) {
-                  return narrowLayout();
-                } else {
-                  return wideLayout();
-                }
-              },
+      body: SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+            // Positioned.fill(
+            //   child: Image.asset(
+            //     'assets/images/richard-horvath-RAZU_R66vUc-unsplash.jpg',
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
+            Center(
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  if (constraints.maxWidth < 600) {
+                    return narrowLayout();
+                  } else {
+                    return wideLayout();
+                  }
+                },
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ), 
+      )
     );
   }
 
