@@ -1,16 +1,35 @@
 # gulife_shift_management_app
 
-A new Flutter project.
+シフト管理アプリ（Flutter製 モバイル & Web対応）
+現場のアナログなシフト管理を効率化するために開発したアプリです。
 
-## Getting Started
+親族が経営するクリーニング工場では、紙のシフト表を使用しており、
+ミスや手間が多く、管理が煩雑でした。
+そこで、業務効率化のためにシンプルで導入コストの低いアプリを開発しました。
 
-This project is a starting point for a Flutter application.
+ 使用技術:
+- フロントエンド: Flutter, Dart
+- バックエンド: Firebase（Authentication, Firestore, Hive）
+- デザイン: Figma
+- その他: Git, GitHub, スプレッドシート連携
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+ 機能一覧:
+ - カレンダー形式でのシフト入力
+ - 入力された内容をスプレッドシートに転送
+ - Web対応（スマホとPCの両方で操作可）
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+セットアップ手順;
+1. このリポジトリをクローン
+2. `flutter pub get` を実行
+3. `flutter run` で実行
+
+
+今後の展望 / 改善点:
+- 勤務時間の自動計算
+- 顧客リストのCSV出力機能
+- UIのアクセシビリティ改善
+
+担当:
+- 企画 / 設計 / UIデザイン / 実装 / テスト：自分
+
