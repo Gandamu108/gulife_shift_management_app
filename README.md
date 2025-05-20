@@ -1,35 +1,34 @@
 # gulife_shift_management_app
 
-シフト管理アプリ（Flutter製 モバイル & Web対応）
-現場のアナログなシフト管理を効率化するために開発したアプリです。
+Shift Management App (made by Flutter for mobile & web) 
+This app was developed to streamline analog shift management onsite.
 
-親族が経営するクリーニング工場では、紙のシフト表を使用しており、
-ミスや手間が多く、管理が煩雑でした。
-そこで、業務効率化のためにシンプルで導入コストの低いアプリを開発しました。
+A cleaning factory run by a family member used a paper shift schedule. 
+It was complicated to manage because of many mistakes and time-consuming tasks.
+Therefore, we developed a simple, low-cost application to improve operational efficiency.
 
- 使用技術:
-- フロントエンド: Flutter, Dart
-- バックエンド: Firebase（Authentication, Firestore, Hive）
-- デザイン: Figma
-- その他: Git, GitHub, スプレッドシート連携
-
-
- 機能一覧:
- - カレンダー形式でのシフト入力
- - 入力された内容をスプレッドシートに転送
- - Web対応（スマホとPCの両方で操作可）
-
-セットアップ手順;
-1. このリポジトリをクローン
-2. `flutter pub get` を実行
-3. `flutter run` で実行
+ Technologies used: Front-end: Flutter, Dutter
+- Front-end: Flutter, Dart
+- Backend: Firebase (Authentication, Firestore, Hive)
+- Design: Figma
+- Other: Git, GitHub, spreadsheet integration
 
 
-今後の展望 / 改善点:
-- 勤務時間の自動計算
-- 管理者画面の作成
-- UIのアクセシビリティ改善
+ Features at a glance
+ - Shift input in calendar format
+ - Transfers input to spreadsheets
+ - Web-enabled (can be operated from both smartphones and PCs)
 
-担当:
-- 企画 / 設計 / UIデザイン / 実装 / テスト：自分
+Setup Instructions; 1.
+1. clone this repository
+2. run `flutter pub get
+Run `flutter run
 
+
+Future Prospects / Improvements: 1.
+- Automatic calculation of working hours
+- Create an admin screen
+- Improve accessibility of UI
+
+Responsibilities: Planning / Design / UI design / Implementation / Testing
+- Planning / Design / UI design / Implementation / Testing: Myself
