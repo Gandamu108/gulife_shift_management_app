@@ -1,34 +1,81 @@
-# gulife_shift_management_app
+# Shift Management App
 
-Shift Management App (made by Flutter for mobile & web) 
-This app was developed to streamline analog shift management onsite.
+A shift management application developed with Flutter for both mobile and web platforms.
 
-A cleaning factory run by a family member used a paper shift schedule. 
-It was complicated to manage because of many mistakes and time-consuming tasks.
-Therefore, we developed a simple, low-cost application to improve operational efficiency.
+This application was created to streamline analog shift management operations at a local cleaning factory run by a family member.
 
- Technologies used: Front-end: Flutter, Dutter
-- Front-end: Flutter, Dart
-- Backend: Firebase (Authentication, Firestore, Hive)
-- Design: Figma
-- Other: Git, GitHub, spreadsheet integration
+Previously, shift schedules were managed on paper, which caused:
+- frequent input mistakes
+- time-consuming aggregation work
+- operational inefficiencies
 
+To solve these issues, I developed a simple and low-cost digital shift management system.
 
- Features at a glance
- - Shift input in calendar format
- - Transfers input to spreadsheets
- - Web-enabled (can be operated from both smartphones and PCs)
+---
 
-Setup Instructions; 1.
-1. clone this repository
-2. run `flutter pub get
-Run `flutter run
+## Features
 
+- Calendar-based shift input
+- Spreadsheet integration for shift export
+- Cross-platform support (smartphone & web)
+- Firebase Authentication login system
+- Local event storage using Hive
 
-Future Prospects / Improvements: 1.
+---
+
+## Technologies Used
+
+### Frontend
+- Flutter
+- Dart
+
+### Backend / Database
+- Firebase Authentication
+- Firestore
+- Hive
+
+### Tools / Others
+- Git
+- GitHub
+- Figma
+- Google Spreadsheet Integration
+
+---
+
+## Security Improvements
+
+- Investigated vulnerabilities detected by GitHub Dependabot Alert
+- Updated Firebase SDK dependencies
+- Improved user identification from display-name-based management to Firebase UID-based management
+
+---
+
+## Setup
+
+```bash
+git clone <repository-url>
+cd <project-name>
+flutter pub get
+flutter run
+```
+
+---
+
+## Future Improvements
+
 - Automatic calculation of working hours
-- Create an admin screen
-- Improve accessibility of UI
+- Admin dashboard creation
+- Improved UI accessibility
+- Enhanced validation and security controls
 
-Responsibilities: Planning / Design / UI design / Implementation / Testing
-- Planning / Design / UI design / Implementation / Testing: Myself
+---
+
+## Responsibilities
+
+This project was independently handled by myself, including:
+
+- Planning
+- UI/UX Design
+- Implementation
+- Testing
+- Security Improvements
